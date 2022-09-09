@@ -10,9 +10,15 @@ namespace MainProject
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Please enter your name");
-            string name = Console.ReadLine();
-            Console.WriteLine("Hello " + name);
+            int numPizzas;
+            Console.WriteLine("How many pizzas would you like to eat?");
+            numPizzas = int.Parse(Console.ReadLine());
+
+            for (int i = 0; i < numPizzas; i++)
+            {
+                Console.WriteLine("Eat pizza number " + (i + 1));
+            }
+
             Console.WriteLine("\nPress enter to exit");
             Console.ReadLine();
         }
