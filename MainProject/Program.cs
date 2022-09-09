@@ -8,7 +8,7 @@ namespace MainProject
 {
     class Program
     { 
-        static void Main(string[] args)
+        static void Pizza()
         {
             // create a variable to store the integer value of the number of pizzas
             int numPizzas;
