@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 
 namespace MainProject
 {
-    class snek
+    class Snek
     {
         // map = [9, 9];
-        public string snake = "";
-        public int[] pos = { 5, 5 };
+        
+
         static void Main(string[] args)
         {
+            string snake = "";
+            int[] pos = { 5, 5 };
+
             Setup();
+
             while (pos[0] < 9 && pos[1] > 0)
             {
-
+                Screen();
             }
         }
 
@@ -32,6 +36,15 @@ namespace MainProject
             Console.CursorVisible = false;
         }
             
+        static void Screen()
+        {
+            if (Console.WindowWidth != 120 || Console.WindowHeight != 30)
+            {
+                Console.WindowWidth = 120;
+                Console.WindowHeight = 30;
+                Console.SetBufferSize(120, 30);
+            }
+        }
 
         static void gameplay()
         {
