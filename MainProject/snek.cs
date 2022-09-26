@@ -11,7 +11,7 @@ namespace MainProject
     class Snek
     {
         static ConsoleKey direction = ConsoleKey.RightArrow;
-        static int snakeLen = 1;
+        static int snakeLen = 3;
         static int[] pos = { 5, 5 };
         static System.Timers.Timer overallTimer = new System.Timers.Timer();
         static List<int[]> oldPos = new List<int[]>();
@@ -96,7 +96,7 @@ namespace MainProject
                 Console.SetCursorPosition(position[0], position[1]);
                 Console.BackgroundColor = ConsoleColor.DarkGreen;
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write("/");
+                Console.Write(" ");
                 Console.ResetColor();
             }
 
@@ -234,7 +234,7 @@ namespace MainProject
         static void Reset()
         {
             direction = ConsoleKey.RightArrow;
-            snakeLen = 1;
+            snakeLen = 3;
             pos = new int[] { 5, 5 };
             overallTimer = new System.Timers.Timer();
             oldPos = new List<int[]>();
