@@ -10,6 +10,8 @@ namespace MainProject
 {
     class Snek
     {
+        static PBC.PicoBoard p = new PBC.PicoBoard();
+
         static ConsoleKey direction = ConsoleKey.RightArrow;
         static int snakeLen = 3;
         static int[] pos = { 5, 5 };
@@ -23,26 +25,30 @@ namespace MainProject
         static bool paused = false;
         static ConsoleKey storedKey;
         static bool exit;
+        static bool wait = false;
 
         static void Main(string[] args)
         {
             while (!(exit))
             {
-                overallTimer.Interval = 100;
-                overallTimer.Enabled = true;
-                overallTimer.Elapsed += Update;
-                overallTimer.Elapsed += Screen;
-
                 Setup();
 
                 while (pos[0] < Console.WindowWidth - 3 && pos[0] > 0 && pos[1] < Console.WindowHeight - 1 && pos[1] > 0 && !(quit) && !(exit)) { GetInput(); }
                 overallTimer.Enabled = false;
                 Reset();
             }
+            p.Disconnect();
         }
 
         static void Setup()
         {
+            p.Connect("COM11");
+
+            overallTimer.Interval = 100;
+            overallTimer.Enabled = true;
+            overallTimer.Elapsed += Update;
+            overallTimer.Elapsed += Screen;
+
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("#######################################################################################################################");
@@ -57,6 +63,10 @@ namespace MainProject
             {
                 SpawnApple();
             }
+
+
+
+
         }
             
         static void Screen(object source, ElapsedEventArgs e)
@@ -143,14 +153,14 @@ namespace MainProject
             {
                 increase[0] = 0;
                 increase[1] = -1;
-                overallTimer.Interval = 200;
+                overallTimer.Interval = 100;
                 prevKey = direction;
             }
             else if (direction == ConsoleKey.DownArrow && prevKey != ConsoleKey.UpArrow)
             {
                 increase[0] = 0;
                 increase[1] = 1;
-                overallTimer.Interval = 200;
+                overallTimer.Interval = 100;
                 prevKey = direction;
             }
             else if (direction == ConsoleKey.LeftArrow && prevKey != ConsoleKey.RightArrow)
@@ -174,7 +184,7 @@ namespace MainProject
 
         static void GetInput()
         {
-            direction = System.Console.ReadKey(true).Key;
+            direction = ConvertInput();
             
             if (direction == ConsoleKey.P)
             {
@@ -245,6 +255,50 @@ namespace MainProject
             quit = false;
             paused = false;
             storedKey = ConsoleKey.RightArrow;
+            wait = false;
+        }
+
+        static ConsoleKey ConvertInput()
+        {
+            int button = p.ReadSensor(PBC.PicoBoard.Sensor.BUTTON);
+            int x = p.ReadSensor(PBC.PicoBoard.Sensor.RESISTANCE_A);
+            int y = p.ReadSensor(PBC.PicoBoard.Sensor.RESISTANCE_B);
+
+            Debug.Write($"x is {x}");
+            Debug.Write($"y is {y}");
+
+            if (button < 1000 && !(wait))
+            {
+                wait = true;
+                return ConsoleKey.P;
+            }
+
+            else if (button > 1000 && wait)
+            {
+                wait = false; // a is x, b is y
+            }
+
+            if ((x > 511 && y > 511 && x > y) || (x > 511 && y < 511 && x - 511 > 511 - y))
+            {
+                return ConsoleKey.RightArrow;
+            }
+            else  if ((x < 511 && y < 511 && x < y ) || (x < 511 && y > 511 && 511 - x > y - 511))
+            {
+                return ConsoleKey.LeftArrow;
+            }
+            else if ((y > 511 && x > 511 && y > x) || (y > 511 && x < 511 && y - 511 > 511 - x))
+            {
+                return ConsoleKey.UpArrow;
+            }
+            else if ((y < 511 && x < 511 && y < x) || (y < 511 && x > 511 && 511 - y > x - 511))
+            {
+                return ConsoleKey.DownArrow;
+            }
+            
+            return ConsoleKey.RightArrow;
+
+            
+
         }
     }
 }
